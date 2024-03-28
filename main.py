@@ -18,6 +18,7 @@ import gspread
 import os
 import shutil
 import cv2
+import getpass
 # %%
 class GoogleSheetHandler:
     def __init__(self, credentials_file='credentials.json'):
@@ -67,9 +68,9 @@ co.add_argument('--disable-infobars')
 co.add_argument('--no-sandbox')
 # co.add_argument('--headless')
 co.add_argument("--disable-popup-blocking")
-co.add_argument(r"--user-data-dir=C:\Users\Dell\AppData\Roaming\Opera Software\Opera Stable")
+co.add_argument(fr"--user-data-dir=C:\Users\{getpass.getuser()}\AppData\Roaming\Opera Software\Opera Stable")
 co.add_argument(r'--profile-directory=Default') #e.g. Profile 3
-co.binary_location = r"C:\Users\Dell\AppData\Local\Programs\Opera\opera.exe"
+co.binary_location = fr"C:\Users\{getpass.getuser()}\AppData\Local\Programs\Opera\opera.exe"
 co.add_experimental_option('w3c', True)
 
 def getWindowHandles():
