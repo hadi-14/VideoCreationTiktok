@@ -155,8 +155,6 @@ for cnt, topic in  enumerate(df["Topic"]):
     driver.get("https://app.simplified.com/video/generate-ai/script-to-video")
     driver.implicitly_wait(10)
     time.sleep(5)
-    actions.click(driver.find_element(By.XPATH, "//button[contains(text(), 'AI Speakers')]")).perform()
-    time.sleep(0.5)
     actions.click(driver.find_element(By.XPATH, "//*[contains(text(), 'Select AI Speaker')]/..")).perform()
     time.sleep(0.5)
 
@@ -168,7 +166,7 @@ for cnt, topic in  enumerate(df["Topic"]):
     # actions.send_keys(Keys.ENTER).perform()
     # time.sleep(0.5)
     
-    actions.click(WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(),'Select AI speaker')]/../button")))).perform()
+    actions.click(WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, "//button[contains(text(), 'AI Speakers')]")))).perform()
     time.sleep(0.5)
     actions.click(WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Matthew')]/../../../..")))).perform()
     time.sleep(1)
