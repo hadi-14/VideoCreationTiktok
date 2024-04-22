@@ -93,6 +93,8 @@ while "Remaining" in df["status"].values.tolist():
         driver.switch_to.window(helper.getWindowHandles()[0])
         title, script = helper.askGPT(topic)
 
+        # TODO: Clear Clipboard and make sure clipboard has only what it neads to have
+
         # Switch to second window
         driver.execute_script(f'''window.open("https://app.simplified.com/video/generate-ai/text-to-video");''')
         driver.switch_to.window(helper.getWindowHandles()[DoneCnt + 1])
