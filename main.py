@@ -14,7 +14,7 @@ import time
 import random
 import string
 
-VIDEOS_PER_ACCOUNT_CYCLE = 10
+VIDEOS_PER_ACCOUNT_CYCLE = 5
 
 # Instantiate GoogleSheetHandler
 handler = GoogleSheetHandler()
@@ -60,7 +60,7 @@ driver.get("https://chat.openai.com/c/dfd3b1e4-2b78-402a-a48e-a327542261b0")
 time.sleep(5)
 driver.implicitly_wait(10)
 
-while "Remaining" in df["status"].values.tolist():
+while "Remaining" in df["Status"].values.tolist():
     driver.execute_script(f'''window.open("https://app.simplified.com/signup");''')
     time.sleep(5)
     driver.switch_to.window(helper.getWindowHandles()[1])
@@ -93,8 +93,6 @@ while "Remaining" in df["status"].values.tolist():
         driver.switch_to.window(helper.getWindowHandles()[0])
         title, script = helper.askGPT(topic)
 
-        # TODO: Clear Clipboard and make sure clipboard has only what it neads to have
-
         # Switch to second window
         driver.execute_script(f'''window.open("https://app.simplified.com/video/generate-ai/text-to-video");''')
         driver.switch_to.window(helper.getWindowHandles()[DoneCnt + 1])
@@ -116,7 +114,7 @@ while "Remaining" in df["status"].values.tolist():
 
         # Wait for export button
         WebDriverWait(driver, 1000).until(EC.element_to_be_clickable((By.XPATH, "//span[contains(text(),'Export')]/..")))
-        time.sleep(5)
+        time.sleep(10)
 
         helper.exportVideo()
 

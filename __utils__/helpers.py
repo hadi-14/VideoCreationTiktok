@@ -1,10 +1,13 @@
+import os
 import random
 import time
-import pyperclip
+import pyclip
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+# import win32clipboard as clipboard
+from ctypes import windll
 
 class BrowserHelpers():
     
@@ -40,6 +43,9 @@ class BrowserHelpers():
         time.sleep(5)
         
     def askGPT(self, topic):
+        
+        self.clearClipboard()
+        
         # Define prompts
         prompts = [
             f'Write a 75 second viral educational showcase TikTok script about Do you know about "{topic}" Make sure the script is engaging with a good, quick hook. Keep the script relatively serious and educational. The script should ONLY include the voice, NOT the editing direction or stage direction! Start with a " and end with a ". Have paragraph breaks that stay within the". Do not do a countdown. Do not include an outro or summary. DO NOT USE EMOJIS! The script should portray the info in an interactive way. Describe and make it educational. Start with "Do you know!" and keep within 250 words',
@@ -56,8 +62,10 @@ class BrowserHelpers():
         self.actions.move_to_element(self.driver.find_elements(By.XPATH, "//div[@data-message-author-role='assistant']")[-1]).perform()
         time.sleep(0.8)
         self.actions.click(self.driver.find_elements(By.XPATH, "//*[@class='flex items-center gap-1.5 rounded-md p-1 text-xs text-token-text-tertiary hover:text-token-text-primary']")[-1]).perform()
-        script = pyperclip.paste().strip()
+        script = pyclip.paste(text=True).strip()
         print("Script: ", script)
+        
+        self.clearClipboard()
 
         # Send second prompt
         self.actions.send_keys_to_element(self.driver.find_element(By.XPATH, "//textarea[@placeholder='Message ChatGPT…']"), prompts[1]).perform()
@@ -67,15 +75,16 @@ class BrowserHelpers():
         # Click on message box to get title
         WebDriverWait(self.driver, 50).until(EC.presence_of_element_located((By.XPATH, "//button[@data-testid='send-button']")))
         self.actions.click(self.driver.find_elements(By.XPATH, "//*[@class='flex items-center gap-1.5 rounded-md p-1 text-xs text-token-text-tertiary hover:text-token-text-primary']")[-1]).perform()
-        title = pyperclip.paste().strip().removeprefix('"').removesuffix('"').replace(": ", " ").replace("?", "")
+        title = pyclip.paste(text=True).strip().removeprefix('"').removesuffix('"').replace(": ", " ").replace("?", "")
         print("Title: ", title)
+        self.clearClipboard()
         
         return title, script
 
     def GenerateVideo(self, title, script):
         time.sleep(10)
 
-        self.actions.click(self.driver.find_element(By.XPATH, "//*[contains(text(), 'Provide a Script')]/..")).perform()
+        self.actions.click(WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Provide a Script')]/..")))).perform()
         time.sleep(0.5)
         
         self.actions.click(self.driver.find_element(By.XPATH, "//*[contains(text(), 'Select AI Speaker')]/..")).perform()
@@ -89,16 +98,17 @@ class BrowserHelpers():
 
         # Enter title
         self.actions.click(self.driver.find_element(By.XPATH, "//textarea[@name='title']")).perform()
-        pyperclip.copy(title)
+        self.clearClipboard()
+        pyclip.copy(title)
         self.actions.key_down(Keys.CONTROL).send_keys("v").key_up(Keys.CONTROL).perform()
         time.sleep(1)
 
         # Enter script
         self.actions.click(self.driver.find_element(By.XPATH, "//textarea[@name='description']")).perform()
-        pyperclip.copy(script)
+        self.clearClipboard()
+        pyclip.copy(script)
         self.actions.key_down(Keys.CONTROL).send_keys("v").key_up(Keys.CONTROL).perform()
         time.sleep(1)
-
         # Generate video
         WebDriverWait(self.driver, 2).until(EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Generate')]"))).click()
 
@@ -108,8 +118,11 @@ class BrowserHelpers():
         time.sleep(1.2)
 
         # Click on download
-        WebDriverWait(self.driver, 2).until(EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Download')]"))).click()
+        WebDriverWait(self.driver, 200).until(EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Download')]"))).click()
 
     # Function to get window handles
     def getWindowHandles(self):
         return self.driver.window_handles
+    
+    def clearClipboard(self):
+        pyclip.clear()
